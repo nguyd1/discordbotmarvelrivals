@@ -1,0 +1,11 @@
+# List of top players to track
+TOP_PLAYERS = [
+    "Player1",
+    "Player2"
+]
+
+# Player-specific emojis
+PLAYER_EMOJIS = {
+    "Player1": "👾",
+    "Player2": "🎯"
+} 
