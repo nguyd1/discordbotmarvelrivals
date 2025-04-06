@@ -547,48 +547,59 @@ async def rank(ctx, *, username: str):
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument('--disable-software-rasterizer')
 
-        # Check if we're on Render.com or local environment
-        if os.getenv('RENDER'):
-            chrome_binary = os.getenv('CHROME_BINARY', '/usr/bin/google-chrome-stable')
-            chromedriver_path = os.getenv('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
-            
-            # Log binary paths
-            logger.info(f"Chrome binary path: {chrome_binary}")
-            logger.info(f"ChromeDriver path: {chromedriver_path}")
-            
-            # Verify Chrome binary exists
-            if not os.path.exists(chrome_binary):
-                logger.error(f"Chrome binary not found at {chrome_binary}")
-                raise FileNotFoundError(f"Chrome binary not found at {chrome_binary}")
-            
-            # Verify ChromeDriver exists
-            if not os.path.exists(chromedriver_path):
-                logger.error(f"ChromeDriver not found at {chromedriver_path}")
-                raise FileNotFoundError(f"ChromeDriver not found at {chromedriver_path}")
-            
-            chrome_options.binary_location = chrome_binary
-            service = Service(executable_path=chromedriver_path)
-            
-            # Log Chrome version
-            try:
-                import subprocess
-                chrome_version = subprocess.check_output([chrome_binary, '--version']).decode().strip()
-                logger.info(f"Chrome version: {chrome_version}")
-            except Exception as e:
-                logger.error(f"Failed to get Chrome version: {str(e)}")
-        else:
-            # Local Windows configuration
-            chrome_binary_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-            if os.path.exists(chrome_binary_path):
-                chrome_options.binary_location = chrome_binary_path
+        try:
+            if os.getenv('RENDER'):
+                chrome_binary = os.getenv('CHROME_BINARY', '/usr/bin/google-chrome')
+                chromedriver_path = os.getenv('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
+                
+                # Log binary paths
+                logger.info(f"Chrome binary path: {chrome_binary}")
+                logger.info(f"ChromeDriver path: {chromedriver_path}")
+                
+                # Verify Chrome binary exists
+                if not os.path.exists(chrome_binary):
+                    logger.error(f"Chrome binary not found at {chrome_binary}")
+                    # Try alternate paths
+                    alternate_paths = ['/usr/bin/google-chrome-stable', '/usr/bin/google-chrome']
+                    for path in alternate_paths:
+                        if os.path.exists(path):
+                            chrome_binary = path
+                            logger.info(f"Found Chrome at alternate path: {path}")
+                            break
+                    else:
+                        raise FileNotFoundError(f"Chrome binary not found in any standard location")
+                
+                # Verify ChromeDriver exists
+                if not os.path.exists(chromedriver_path):
+                    logger.error(f"ChromeDriver not found at {chromedriver_path}")
+                    raise FileNotFoundError(f"ChromeDriver not found at {chromedriver_path}")
+                
+                chrome_options.binary_location = chrome_binary
+                service = Service(executable_path=chromedriver_path)
+                
+                # Test Chrome version
+                try:
+                    import subprocess
+                    chrome_version = subprocess.check_output([chrome_binary, '--version']).decode().strip()
+                    logger.info(f"Chrome version: {chrome_version}")
+                except Exception as e:
+                    logger.error(f"Failed to get Chrome version: {str(e)}")
             else:
-                # Try alternate Chrome installation path
-                chrome_binary_path = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+                # Local Windows configuration
+                chrome_binary_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
                 if os.path.exists(chrome_binary_path):
                     chrome_options.binary_location = chrome_binary_path
                 else:
-                    raise Exception("Chrome browser not found. Please install Google Chrome.")
-            service = Service(ChromeDriverManager().install())
+                    # Try alternate Chrome installation path
+                    chrome_binary_path = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+                    if os.path.exists(chrome_binary_path):
+                        chrome_options.binary_location = chrome_binary_path
+                    else:
+                        raise Exception("Chrome browser not found. Please install Google Chrome.")
+                service = Service(ChromeDriverManager().install())
+        except Exception as e:
+            logger.error(f"Chrome setup failed: {str(e)}")
+            raise
 
         # Initialize the Chrome WebDriver in the thread pool
         loop = asyncio.get_event_loop()
@@ -803,48 +814,59 @@ async def top(ctx):
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument('--disable-software-rasterizer')
 
-        # Check if we're on Render.com or local environment
-        if os.getenv('RENDER'):
-            chrome_binary = os.getenv('CHROME_BINARY', '/usr/bin/google-chrome-stable')
-            chromedriver_path = os.getenv('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
-            
-            # Log binary paths
-            logger.info(f"Chrome binary path: {chrome_binary}")
-            logger.info(f"ChromeDriver path: {chromedriver_path}")
-            
-            # Verify Chrome binary exists
-            if not os.path.exists(chrome_binary):
-                logger.error(f"Chrome binary not found at {chrome_binary}")
-                raise FileNotFoundError(f"Chrome binary not found at {chrome_binary}")
-            
-            # Verify ChromeDriver exists
-            if not os.path.exists(chromedriver_path):
-                logger.error(f"ChromeDriver not found at {chromedriver_path}")
-                raise FileNotFoundError(f"ChromeDriver not found at {chromedriver_path}")
-            
-            chrome_options.binary_location = chrome_binary
-            service = Service(executable_path=chromedriver_path)
-            
-            # Log Chrome version
-            try:
-                import subprocess
-                chrome_version = subprocess.check_output([chrome_binary, '--version']).decode().strip()
-                logger.info(f"Chrome version: {chrome_version}")
-            except Exception as e:
-                logger.error(f"Failed to get Chrome version: {str(e)}")
-        else:
-            # Local Windows configuration
-            chrome_binary_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-            if os.path.exists(chrome_binary_path):
-                chrome_options.binary_location = chrome_binary_path
+        try:
+            if os.getenv('RENDER'):
+                chrome_binary = os.getenv('CHROME_BINARY', '/usr/bin/google-chrome')
+                chromedriver_path = os.getenv('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
+                
+                # Log binary paths
+                logger.info(f"Chrome binary path: {chrome_binary}")
+                logger.info(f"ChromeDriver path: {chromedriver_path}")
+                
+                # Verify Chrome binary exists
+                if not os.path.exists(chrome_binary):
+                    logger.error(f"Chrome binary not found at {chrome_binary}")
+                    # Try alternate paths
+                    alternate_paths = ['/usr/bin/google-chrome-stable', '/usr/bin/google-chrome']
+                    for path in alternate_paths:
+                        if os.path.exists(path):
+                            chrome_binary = path
+                            logger.info(f"Found Chrome at alternate path: {path}")
+                            break
+                    else:
+                        raise FileNotFoundError(f"Chrome binary not found in any standard location")
+                
+                # Verify ChromeDriver exists
+                if not os.path.exists(chromedriver_path):
+                    logger.error(f"ChromeDriver not found at {chromedriver_path}")
+                    raise FileNotFoundError(f"ChromeDriver not found at {chromedriver_path}")
+                
+                chrome_options.binary_location = chrome_binary
+                service = Service(executable_path=chromedriver_path)
+                
+                # Test Chrome version
+                try:
+                    import subprocess
+                    chrome_version = subprocess.check_output([chrome_binary, '--version']).decode().strip()
+                    logger.info(f"Chrome version: {chrome_version}")
+                except Exception as e:
+                    logger.error(f"Failed to get Chrome version: {str(e)}")
             else:
-                # Try alternate Chrome installation path
-                chrome_binary_path = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+                # Local Windows configuration
+                chrome_binary_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
                 if os.path.exists(chrome_binary_path):
                     chrome_options.binary_location = chrome_binary_path
                 else:
-                    raise Exception("Chrome browser not found. Please install Google Chrome.")
-            service = Service(ChromeDriverManager().install())
+                    # Try alternate Chrome installation path
+                    chrome_binary_path = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+                    if os.path.exists(chrome_binary_path):
+                        chrome_options.binary_location = chrome_binary_path
+                    else:
+                        raise Exception("Chrome browser not found. Please install Google Chrome.")
+                service = Service(ChromeDriverManager().install())
+        except Exception as e:
+            logger.error(f"Chrome setup failed: {str(e)}")
+            raise
 
         # Initialize the Chrome WebDriver in the thread pool
         loop = asyncio.get_event_loop()
