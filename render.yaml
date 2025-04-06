@@ -1,22 +1,25 @@
 services:
   - type: web
     name: discord-bot
-    env: python
+    env: docker
     buildCommand: |
-      # Add Chrome repository
-      wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-      sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+      # Install system dependencies
+      apt-get update
+      apt-get install -y wget gnupg unzip
+
+      # Install Chrome
+      wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+      echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list
+      apt-get update
+      apt-get install -y google-chrome-stable
       
-      # Update package list and install Chrome
-      sudo apt-get update
-      sudo apt-get install -y google-chrome-stable
-      
-      # Install ChromeDriver
+      # Get Chrome version and install matching ChromeDriver
       CHROME_VERSION=$(google-chrome --version | cut -d " " -f3)
-      wget -q "https://chromedriver.storage.googleapis.com/${CHROME_VERSION}/chromedriver_linux64.zip"
+      CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%%.*}")
+      wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
       unzip chromedriver_linux64.zip
-      sudo mv chromedriver /usr/bin/chromedriver
-      sudo chmod +x /usr/bin/chromedriver
+      mv chromedriver /usr/local/bin/
+      chmod +x /usr/local/bin/chromedriver
       
       # Install Python dependencies
       pip install -r requirements.txt
@@ -24,9 +27,9 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.0
-      - key: RENDER
-        value: true
       - key: CHROME_BINARY
         value: /usr/bin/google-chrome-stable
       - key: CHROMEDRIVER_PATH
-        value: /usr/bin/chromedriver
+        value: /usr/local/bin/chromedriver
+      - key: RENDER
+        value: "true"
