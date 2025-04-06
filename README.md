@@ -19,8 +19,7 @@ A Discord bot that provides player statistics and rankings for Marvel Rivals pla
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/marvel-rivals-bot.git
-cd marvel-rivals-bot
+git clone https://github.com/nguyd1/discordbotmarvelrivals.git
 ```
 
 2. Install required packages:
