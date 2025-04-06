@@ -3,19 +3,30 @@ services:
     name: discord-bot
     env: python
     buildCommand: |
-      # Install Chrome
-      wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-      echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list
-      apt-get update
-      apt-get install -y google-chrome-stable
+      # Add Chrome repository
+      wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+      sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+      
+      # Update package list and install Chrome
+      sudo apt-get update
+      sudo apt-get install -y google-chrome-stable
       
       # Install ChromeDriver
-      CHROME_VERSION=$(google-chrome --version | cut -d " " -f3 | cut -d "." -f1)
-      wget -q "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$CHROME_VERSION.0.6261.94/linux64/chromedriver-linux64.zip"
-      unzip chromedriver-linux64.zip
-      mv chromedriver-linux64/chromedriver /usr/bin/chromedriver
-      chmod +x /usr/bin/chromedriver
+      CHROME_VERSION=$(google-chrome --version | cut -d " " -f3)
+      wget -q "https://chromedriver.storage.googleapis.com/${CHROME_VERSION}/chromedriver_linux64.zip"
+      unzip chromedriver_linux64.zip
+      sudo mv chromedriver /usr/bin/chromedriver
+      sudo chmod +x /usr/bin/chromedriver
       
       # Install Python dependencies
       pip install -r requirements.txt
     startCommand: python botforserver.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: RENDER
+        value: true
+      - key: CHROME_BINARY
+        value: /usr/bin/google-chrome-stable
+      - key: CHROMEDRIVER_PATH
+        value: /usr/bin/chromedriver

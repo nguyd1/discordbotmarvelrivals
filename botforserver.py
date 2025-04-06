@@ -547,10 +547,10 @@ async def rank(ctx, *, username: str):
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument('--disable-software-rasterizer')
 
-        # Check if we're on Render.com
+        # Check if we're on Render.com or local environment
         if os.getenv('RENDER'):
-            chrome_options.binary_location = '/usr/bin/google-chrome-stable'
-            service = Service(executable_path='/usr/bin/chromedriver')
+            chrome_options.binary_location = os.getenv('CHROME_BINARY', '/usr/bin/google-chrome-stable')
+            service = Service(executable_path=os.getenv('CHROMEDRIVER_PATH', '/usr/bin/chromedriver'))
         else:
             # Local Windows configuration
             chrome_binary_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
@@ -778,10 +778,10 @@ async def top(ctx):
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument('--disable-software-rasterizer')
 
-        # Check if we're on Render.com
+        # Check if we're on Render.com or local environment
         if os.getenv('RENDER'):
-            chrome_options.binary_location = '/usr/bin/google-chrome-stable'
-            service = Service(executable_path='/usr/bin/chromedriver')
+            chrome_options.binary_location = os.getenv('CHROME_BINARY', '/usr/bin/google-chrome-stable')
+            service = Service(executable_path=os.getenv('CHROMEDRIVER_PATH', '/usr/bin/chromedriver'))
         else:
             # Local Windows configuration
             chrome_binary_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
