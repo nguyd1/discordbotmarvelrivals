@@ -2,35 +2,7 @@ services:
   - type: web
     name: discord-bot
     env: docker
-    buildCommand: |
-      # Install system dependencies
-      apt-get update && apt-get install -y \
-        wget \
-        gnupg \
-        unzip \
-        curl
-
-      # Install Chrome
-      curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-      apt-get install -y ./google-chrome-stable_current_amd64.deb
-      
-      # Get Chrome version and install matching ChromeDriver
-      CHROME_VERSION=$(google-chrome --version | cut -d " " -f3)
-      CHROMEDRIVER_VERSION=$(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%%.*})
-      wget -q https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
-      unzip -q chromedriver_linux64.zip -d /usr/local/bin/
-      chmod +x /usr/local/bin/chromedriver
-      rm chromedriver_linux64.zip google-chrome-stable_current_amd64.deb
-      
-      # Install Python dependencies
-      pip install -r requirements.txt
-    startCommand: python botforserver.py
+    dockerfilePath: ./Dockerfile
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.9.0
-      - key: CHROME_BINARY
-        value: /usr/bin/google-chrome
-      - key: CHROMEDRIVER_PATH
-        value: /usr/local/bin/chromedriver
       - key: RENDER
         value: "true"

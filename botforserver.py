@@ -549,30 +549,43 @@ async def rank(ctx, *, username: str):
 
         try:
             if os.getenv('RENDER'):
-                chrome_binary = os.getenv('CHROME_BINARY', '/usr/bin/google-chrome')
-                chromedriver_path = os.getenv('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
+                # List of possible Chrome binary locations
+                chrome_paths = [
+                    os.getenv('CHROME_BINARY', '/opt/chrome/google-chrome'),
+                    '/opt/chrome/google-chrome',
+                    '/usr/bin/google-chrome',
+                    '/usr/bin/google-chrome-stable'
+                ]
                 
-                # Log binary paths
-                logger.info(f"Chrome binary path: {chrome_binary}")
-                logger.info(f"ChromeDriver path: {chromedriver_path}")
+                # Find first existing Chrome binary
+                chrome_binary = None
+                for path in chrome_paths:
+                    if os.path.exists(path):
+                        chrome_binary = path
+                        logger.info(f"Found Chrome binary at: {path}")
+                        break
                 
-                # Verify Chrome binary exists
-                if not os.path.exists(chrome_binary):
-                    logger.error(f"Chrome binary not found at {chrome_binary}")
-                    # Try alternate paths
-                    alternate_paths = ['/usr/bin/google-chrome-stable', '/usr/bin/google-chrome']
-                    for path in alternate_paths:
-                        if os.path.exists(path):
-                            chrome_binary = path
-                            logger.info(f"Found Chrome at alternate path: {path}")
-                            break
-                    else:
-                        raise FileNotFoundError(f"Chrome binary not found in any standard location")
+                if not chrome_binary:
+                    raise FileNotFoundError("Chrome binary not found in any standard location")
                 
-                # Verify ChromeDriver exists
-                if not os.path.exists(chromedriver_path):
-                    logger.error(f"ChromeDriver not found at {chromedriver_path}")
-                    raise FileNotFoundError(f"ChromeDriver not found at {chromedriver_path}")
+                # List of possible ChromeDriver locations
+                chromedriver_paths = [
+                    os.getenv('CHROMEDRIVER_PATH', '/opt/chrome/chromedriver'),
+                    '/opt/chrome/chromedriver',
+                    '/usr/local/bin/chromedriver',
+                    '/usr/bin/chromedriver'
+                ]
+                
+                # Find first existing ChromeDriver
+                chromedriver_path = None
+                for path in chromedriver_paths:
+                    if os.path.exists(path):
+                        chromedriver_path = path
+                        logger.info(f"Found ChromeDriver at: {path}")
+                        break
+                
+                if not chromedriver_path:
+                    raise FileNotFoundError("ChromeDriver not found in any standard location")
                 
                 chrome_options.binary_location = chrome_binary
                 service = Service(executable_path=chromedriver_path)
@@ -816,30 +829,43 @@ async def top(ctx):
 
         try:
             if os.getenv('RENDER'):
-                chrome_binary = os.getenv('CHROME_BINARY', '/usr/bin/google-chrome')
-                chromedriver_path = os.getenv('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
+                # List of possible Chrome binary locations
+                chrome_paths = [
+                    os.getenv('CHROME_BINARY', '/opt/chrome/google-chrome'),
+                    '/opt/chrome/google-chrome',
+                    '/usr/bin/google-chrome',
+                    '/usr/bin/google-chrome-stable'
+                ]
                 
-                # Log binary paths
-                logger.info(f"Chrome binary path: {chrome_binary}")
-                logger.info(f"ChromeDriver path: {chromedriver_path}")
+                # Find first existing Chrome binary
+                chrome_binary = None
+                for path in chrome_paths:
+                    if os.path.exists(path):
+                        chrome_binary = path
+                        logger.info(f"Found Chrome binary at: {path}")
+                        break
                 
-                # Verify Chrome binary exists
-                if not os.path.exists(chrome_binary):
-                    logger.error(f"Chrome binary not found at {chrome_binary}")
-                    # Try alternate paths
-                    alternate_paths = ['/usr/bin/google-chrome-stable', '/usr/bin/google-chrome']
-                    for path in alternate_paths:
-                        if os.path.exists(path):
-                            chrome_binary = path
-                            logger.info(f"Found Chrome at alternate path: {path}")
-                            break
-                    else:
-                        raise FileNotFoundError(f"Chrome binary not found in any standard location")
+                if not chrome_binary:
+                    raise FileNotFoundError("Chrome binary not found in any standard location")
                 
-                # Verify ChromeDriver exists
-                if not os.path.exists(chromedriver_path):
-                    logger.error(f"ChromeDriver not found at {chromedriver_path}")
-                    raise FileNotFoundError(f"ChromeDriver not found at {chromedriver_path}")
+                # List of possible ChromeDriver locations
+                chromedriver_paths = [
+                    os.getenv('CHROMEDRIVER_PATH', '/opt/chrome/chromedriver'),
+                    '/opt/chrome/chromedriver',
+                    '/usr/local/bin/chromedriver',
+                    '/usr/bin/chromedriver'
+                ]
+                
+                # Find first existing ChromeDriver
+                chromedriver_path = None
+                for path in chromedriver_paths:
+                    if os.path.exists(path):
+                        chromedriver_path = path
+                        logger.info(f"Found ChromeDriver at: {path}")
+                        break
+                
+                if not chromedriver_path:
+                    raise FileNotFoundError("ChromeDriver not found in any standard location")
                 
                 chrome_options.binary_location = chrome_binary
                 service = Service(executable_path=chromedriver_path)
