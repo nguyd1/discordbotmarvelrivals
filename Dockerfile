@@ -11,20 +11,30 @@ RUN apt-get update && apt-get install -y \
     libnss3 \
     libxss1 \
     libasound2 \
-    libglib2.0-0
+    libglib2.0-0 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrandr2 \
+    libxrender1 \
+    libxtst6
 
-# Install Chrome using the alternative method
-RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list && \
-    apt-get update && \
-    apt-get install -y google-chrome-stable
-
-# Install ChromeDriver using Chrome For Testing
-RUN chrome_version=$(google-chrome --version | awk '{print $3}' | cut -d. -f1) && \
-    wget -q https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/${chrome_version}.0.6261.111/linux64/chromedriver-linux64.zip && \
-    unzip -j chromedriver-linux64.zip "chromedriver-linux64/chromedriver" -d /usr/bin/ && \
+# Download and install Chrome and ChromeDriver
+RUN wget -O /tmp/chrome-linux64.zip https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/119.0.6045.105/linux64/chrome-linux64.zip && \
+    wget -O /tmp/chromedriver-linux64.zip https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/119.0.6045.105/linux64/chromedriver-linux64.zip && \
+    unzip /tmp/chrome-linux64.zip -d /opt/ && \
+    unzip /tmp/chromedriver-linux64.zip -d /opt/ && \
+    ln -s /opt/chrome-linux64/chrome /usr/bin/google-chrome && \
+    ln -s /opt/chromedriver-linux64/chromedriver /usr/bin/chromedriver && \
+    chmod +x /usr/bin/google-chrome && \
     chmod +x /usr/bin/chromedriver && \
-    rm chromedriver-linux64.zip
+    rm /tmp/chrome-linux64.zip /tmp/chromedriver-linux64.zip
 
 # Set up working directory
 WORKDIR /app
