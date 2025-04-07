@@ -23,7 +23,16 @@ RUN apt-get update && apt-get install -y \
     libxi6 \
     libxrandr2 \
     libxrender1 \
-    libxtst6
+    libxtst6 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libgtk-3-0 \
+    libpango-1.0-0 \
+    libcups2 \
+    libu2f-udev \
+    libvulkan1 \
+    fonts-liberation \
+    xdg-utils
 
 # Download and install Chrome and ChromeDriver
 RUN wget -O /tmp/chrome-linux64.zip https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/119.0.6045.105/linux64/chrome-linux64.zip && \
@@ -53,8 +62,8 @@ ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
 ENV DISPLAY=:99
 
 # Verify installations
-RUN echo "Chrome version:" && google-chrome --version && \
-    echo "ChromeDriver version:" && chromedriver --version
+RUN google-chrome --version || true && \
+    chromedriver --version || true
 
 # Run the bot
 CMD ["python", "botforserver.py"]
