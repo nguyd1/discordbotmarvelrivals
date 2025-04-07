@@ -3,6 +3,8 @@ services:
     name: discord-bot
     env: docker
     dockerfilePath: ./Dockerfile
+    buildCommand: docker build -t discord-bot .
+    startCommand: docker run discord-bot
     envVars:
       - key: RENDER
         value: "true"
