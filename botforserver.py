@@ -539,18 +539,21 @@ async def rank(ctx, *, username: str):
         encoded_username = urllib.parse.quote(username)
         profile_url = f'https://mrivals.gg/player/{encoded_username}'
 
-        # Set up Chrome options for cloud environment
+        # Set up Chrome options for maximum performance
         chrome_options = Options()
+        chrome_options.add_argument('--headless=new')
         chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--headless')
         chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_argument('--disable-gpu')
-        chrome_options.add_argument('--disable-software-rasterizer')
-        chrome_options.add_argument('--disable-setuid-sandbox')
-        chrome_options.add_argument('--no-first-run')
-        chrome_options.add_argument('--no-zygote')
-        chrome_options.add_argument('--single-process')
-        chrome_options.add_argument('--window-size=1920,1080')
+        chrome_options.add_argument('--disable-extensions')
+        chrome_options.add_argument('--disable-infobars')
+        chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+        chrome_options.add_argument('--disable-web-security')
+        chrome_options.add_argument('--disable-logging')
+        chrome_options.add_argument('--log-level=3')
+        chrome_options.add_argument('--disable-images')  # Disable image loading
+        chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        chrome_options.add_experimental_option('useAutomationExtension', False)
 
         try:
             if os.getenv('RENDER'):
@@ -815,18 +818,21 @@ async def top(ctx):
         # Send initial loading message
         loading_message = await ctx.send("🔍 Fetching top players data...")
 
-        # Set up Chrome options for cloud environment
+        # Set up Chrome options for maximum performance
         chrome_options = Options()
+        chrome_options.add_argument('--headless=new')
         chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--headless')
         chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_argument('--disable-gpu')
-        chrome_options.add_argument('--disable-software-rasterizer')
-        chrome_options.add_argument('--disable-setuid-sandbox')
-        chrome_options.add_argument('--no-first-run')
-        chrome_options.add_argument('--no-zygote')
-        chrome_options.add_argument('--single-process')
-        chrome_options.add_argument('--window-size=1920,1080')
+        chrome_options.add_argument('--disable-extensions')
+        chrome_options.add_argument('--disable-infobars')
+        chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+        chrome_options.add_argument('--disable-web-security')
+        chrome_options.add_argument('--disable-logging')
+        chrome_options.add_argument('--log-level=3')
+        chrome_options.add_argument('--disable-images')  # Disable image loading
+        chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        chrome_options.add_experimental_option('useAutomationExtension', False)
 
         try:
             if os.getenv('RENDER'):
