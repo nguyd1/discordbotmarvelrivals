@@ -18,14 +18,12 @@ RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd6
     apt-get install -y ./google-chrome-stable_current_amd64.deb && \
     rm ./google-chrome-stable_current_amd64.deb
 
-# Get Chrome version and install matching ChromeDriver
-RUN CHROME_VERSION=$(google-chrome --version | cut -d " " -f3) && \
-    CHROME_MAJOR_VERSION=$(echo $CHROME_VERSION | cut -d. -f1) && \
-    wget -q "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$CHROME_MAJOR_VERSION.0.6261.94/linux64/chromedriver-linux64.zip" && \
-    unzip chromedriver-linux64.zip && \
-    mv chromedriver-linux64/chromedriver /usr/bin/ && \
+# Install ChromeDriver using a fixed version that's known to work
+RUN wget -q https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip && \
+    unzip chromedriver_linux64.zip && \
+    mv chromedriver /usr/bin/ && \
     chmod +x /usr/bin/chromedriver && \
-    rm -rf chromedriver-linux64.zip chromedriver-linux64
+    rm chromedriver_linux64.zip
 
 # Set up working directory
 WORKDIR /app
