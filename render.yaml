@@ -2,9 +2,5 @@ services:
   - type: web
     name: discord-bot
     env: docker
-    dockerfilePath: ./Dockerfile
-    buildCommand: docker build -t discord-bot .
-    startCommand: docker run discord-bot
-    envVars:
-      - key: RENDER
-        value: "true"
+    dockerCommand: python botforserver.py
+    dockerfilePath: Dockerfile
