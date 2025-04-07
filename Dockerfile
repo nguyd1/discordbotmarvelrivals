@@ -18,12 +18,14 @@ RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd6
     apt-get install -y ./google-chrome-stable_current_amd64.deb && \
     rm ./google-chrome-stable_current_amd64.deb
 
-# Install ChromeDriver using a fixed version that's known to work
-RUN wget -q https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip && \
+# Get Chrome version and install matching ChromeDriver
+RUN CHROME_VERSION=$(google-chrome --version | cut -d " " -f3 | cut -d "." -f1) && \
+    wget -q "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}" -O CHROME_DRIVER_VERSION && \
+    wget -q "https://chromedriver.storage.googleapis.com/$(cat CHROME_DRIVER_VERSION)/chromedriver_linux64.zip" && \
     unzip chromedriver_linux64.zip && \
     mv chromedriver /usr/bin/ && \
     chmod +x /usr/bin/chromedriver && \
-    rm chromedriver_linux64.zip
+    rm chromedriver_linux64.zip CHROME_DRIVER_VERSION
 
 # Set up working directory
 WORKDIR /app
@@ -41,10 +43,14 @@ ENV CHROME_BINARY=/usr/bin/google-chrome
 ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
 ENV DISPLAY=:99
 
-# Verify installations
-RUN ls -la /usr/bin/chromedriver && \
-    chromedriver --version && \
-    google-chrome --version
+# Verify installations and versions match
+RUN CHROME_VER=$(google-chrome --version | cut -d " " -f3) && \
+    DRIVER_VER=$(chromedriver --version | cut -d " " -f2) && \
+    echo "Chrome version: $CHROME_VER" && \
+    echo "ChromeDriver version: $DRIVER_VER" && \
+    if [ "${CHROME_VER%%.*}" != "${DRIVER_VER%%.*}" ]; then \
+        echo "Version mismatch!" && exit 1; \
+    fi
 
 # Run the bot
 CMD ["python", "botforserver.py"]
